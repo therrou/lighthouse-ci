@@ -27,12 +27,14 @@ jobs:
             sleep 1
           done
 
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v12
+     - name: Run Lighthouse CI
+        run: |
+          lhci autorun --upload.target=temporary-public-storage --collect.url=http://localhost:4321
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse results as artifact
+        uses: actions/upload-artifact@v3
         with:
-          configPath: ./lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-          urls: http://localhost:4321
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          githubAppToken: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          name: lighthouse-results
+          path: .lighthouseci
