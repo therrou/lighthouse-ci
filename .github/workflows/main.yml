@@ -2,6 +2,7 @@ name: Lighthouse CI
 on: push
 
 jobs:
+  lighthouse:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
             sleep 1
           done
 
-     - name: Run Lighthouse CI
+      - name: Run Lighthouse CI
         run: |
           lhci autorun --upload.target=temporary-public-storage --collect.url=http://localhost:4321
         env:
