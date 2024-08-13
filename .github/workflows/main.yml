@@ -18,9 +18,6 @@ jobs:
       - name: Build Astro site
         run: npm run build
 
-      - name: List dist contents
-        run: ls -R dist
-
       - name: Install serve
         run: npm install -g serve
 
