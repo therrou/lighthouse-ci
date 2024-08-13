@@ -24,7 +24,7 @@ jobs:
       - name: Wait for server
         run: |
           while ! nc -z localhost 4321; do
-            sleep 1
+            sleep 3
           done
 
       - name: Run Lighthouse CI
