@@ -1,5 +1,6 @@
 name: Lighthouse CI
 on: push
+
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
@@ -9,7 +10,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # or whatever version you're using
+          node-version: '18'
 
       - name: Install dependencies
         run: npm ci
@@ -17,9 +18,14 @@ jobs:
       - name: Build Astro site
         run: npm run build
 
+      - name: Run Astro site
+        run: npm run start & npx wait-on http://localhost:3000
+
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
         with:
-          configPath: './lighthouserc.json'
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/products
           uploadArtifacts: true
           temporaryPublicStorage: true
