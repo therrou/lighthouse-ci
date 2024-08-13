@@ -34,3 +34,5 @@ jobs:
           uploadArtifacts: true
           temporaryPublicStorage: true
           urls: http://localhost:4321
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          githubAppToken: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
