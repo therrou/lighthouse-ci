@@ -3,9 +3,9 @@
       "collect": {
         "staticDistDir": "./dist",
         "url": [
-          "http://localhost:8080",
-          "http://localhost:8080/products",
-          "http://localhost:8080/contact"
+          "http://localhost:4321",
+          "http://localhost:4321/products",
+          "http://localhost:4321/contact"
         ]
       },
       "assert": {
