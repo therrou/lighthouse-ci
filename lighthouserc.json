@@ -1,12 +1,8 @@
 {
     "ci": {
       "collect": {
-        "staticDistDir": "./dist",
-        "url": [
-          "http://localhost:4321",
-          "http://localhost:4321/products",
-          "http://localhost:4321/contact"
-        ]
+        "staticDistDir": "./dist"
+      
       },
       "assert": {
         "assertions": {
