@@ -1,7 +1,7 @@
 {
     "ci": {
       "collect": {
-        "staticDistDir": "./.vercel/output"
+        "url": ["http://localhost:4321", "http://localhost:4321/products", "http://localhost:4321/about"]
       
       },
       "assert": {
