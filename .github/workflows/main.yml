@@ -30,7 +30,7 @@ jobs:
       - name: Run Lighthouse CI
         uses: foo-software/lighthouse-check-action@master
         with:
-          urls: 'http://localhost:4321, http://localhost:4321/products, http://localhost:4321/about'
+          urls: 'http://localhost:4321, http://localhost:4321/products, http://localhost:4321/contact'
           prCommentEnabled: true
           device: 'all'
           gitHubAccessToken: ${{ secrets.GITHUB_TOKEN }}
