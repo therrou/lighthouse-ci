@@ -1,0 +1,31 @@
+name: Lighthouse CI
+on: [push, pull_request]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+
+      - name: Start Astro preview server
+        run: npm run preview -- --port 4321 &
+
+      - name: Wait for server
+        run: |
+          while ! nc -z localhost 4321; do
+            sleep 3
+          done
+
+      - name: Run Pa11y-CI
+        run: npm run pa11y-ci:sitemap
