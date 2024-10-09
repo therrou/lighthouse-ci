@@ -1,0 +1,53 @@
+name: Axe Core CI
+on: [push, pull_request]
+
+jobs:
+  axe-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+
+      - name: Start Astro preview server
+        run: npm run preview -- --port 4321 &
+
+      - name: Wait for server
+        run: |
+          while ! nc -z localhost 4321; do
+            sleep 3
+          done
+ 
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Run Axe CI
+        run: |
+          URLS="http://localhost:4321"
+          npm run axe
+        env:
+          URLS: "http://localhost:4321"
+
+      - name: Check Axe results
+        run: |
+          if [ -f axe-results.json ]; then
+            if jq -e '.violations | length > 0' axe-results.json > /dev/null; then
+              echo "Accessibility issues found. Check axe-results.json for details."
+              exit 1
+            else
+              echo "No accessibility issues found."
+            fi
+          else
+            echo "axe-results.json not found. Axe may have failed to run."
+            exit 1
+          fi
+
