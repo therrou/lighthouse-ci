@@ -27,7 +27,7 @@ jobs:
             sleep 3
           done
 
-      - name: Run Lighthouse CI
+      - name: Run Axe CI
         uses: foo-software/lighthouse-check-action@master
         with:
           urls: 'http://localhost:4321, http://localhost:4321/products, http://localhost:4321/contact'
