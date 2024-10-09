@@ -1,4 +1,4 @@
-name: Lighthouse CI
+name: Axe Core CI
 on: [push, pull_request]
 
 jobs:
@@ -26,12 +26,28 @@ jobs:
           while ! nc -z localhost 4321; do
             sleep 3
           done
+ 
+      - name: Install jq
+        run: sudo apt-get install jq
 
       - name: Run Axe CI
-        uses: foo-software/lighthouse-check-action@master
-        with:
-          urls: 'http://localhost:4321, http://localhost:4321/products, http://localhost:4321/contact'
-          prCommentEnabled: true
-          device: 'all'
-          gitHubAccessToken: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          URLS="http://localhost:4321"
+          npm run axe
+        env:
+          URLS: "http://localhost:4321"
+
+      - name: Check Axe results
+        run: |
+          if [ -f axe-results.json ]; then
+            if jq -e '.violations | length > 0' axe-results.json > /dev/null; then
+              echo "Accessibility issues found. Check axe-results.json for details."
+              exit 1
+            else
+              echo "No accessibility issues found."
+            fi
+          else
+            echo "axe-results.json not found. Axe may have failed to run."
+            exit 1
+          fi
 
