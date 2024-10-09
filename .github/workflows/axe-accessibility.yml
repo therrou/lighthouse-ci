@@ -2,7 +2,7 @@ name: Axe Core CI
 on: [push, pull_request]
 
 jobs:
-  lighthouse:
+  axe-ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
       - name: Run Axe CI
         run: |
           URLS="http://localhost:4321"
-          npm run axe --save axe-results.json
+          npm run axe
         env:
           URLS: "http://localhost:4321"
 
