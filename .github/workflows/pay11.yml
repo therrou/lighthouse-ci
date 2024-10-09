@@ -1,5 +1,5 @@
-name: Lighthouse CI
-on: [push, pull_request]
+name: Pa11y-CI
+on: [pull_request]
 
 jobs:
   lighthouse:
