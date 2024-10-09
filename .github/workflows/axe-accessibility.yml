@@ -33,7 +33,7 @@ jobs:
       - name: Run Axe CI
         run: |
           URLS="http://localhost:4321"
-          npm run axe
+          npm run axe --save axe-results.json
         env:
           URLS: "http://localhost:4321"
 
