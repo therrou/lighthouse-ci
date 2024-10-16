@@ -59,14 +59,13 @@ jobs:
           echo "\`\`\`" >> report.md
 
       - name: Analyze results
-          id: analyze
-          run: |
-            severe_issues=$(jq '[.[] | select(.impact == "critical" or .impact == "serious")] | length' axe-results.json)
-            echo "severe_issues=$severe_issues" >> $GITHUB_OUTPUT
-            if [ $severe_issues -gt 5 ]; then
-              echo "Too many severe accessibility issues found: $severe_issues"
-              exit 1
-            fi
+        run: |
+          severe_issues=$(jq '[.[] | select(.impact == "critical" or .impact == "serious")] | length' axe-results.json)
+          echo "severe_issues=$severe_issues" >> $GITHUB_OUTPUT
+          if [ $severe_issues -gt 5 ]; then
+            echo "Too many severe accessibility issues found: $severe_issues"
+            exit 1
+          fi
 
       - name: Comment PR
         uses: actions/github-script@v6
