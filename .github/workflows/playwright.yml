@@ -2,6 +2,7 @@ name: Playwright Tests
 on: [pull_request]
 jobs:
   test:
+    timeout-minutes: 60
     name: Run playwright tests
     runs-on: ubuntu-latest
     needs: install
