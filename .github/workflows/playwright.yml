@@ -17,6 +17,9 @@ jobs:
       - name: Build Astro site
         run: npm run build
 
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+
       - name: Start Astro preview server
         run: npm run preview -- --port 4321 &
 
@@ -32,3 +35,35 @@ jobs:
         if: always()
         with:
           report-file: results.json
+
+      - name: Parse accessibility results
+        if: always()
+        id: parse_results
+        run: |
+          content=$(jq -r '.suites[].specs[] | select(.ok == false) | .tests[].results[] | 
+            .error.message | fromjson | 
+            .[] | "| \(.id) | \(.impact) | \(.description) | \(.nodes[0].html) |"' results.json)
+          echo "results<<EOF" >> $GITHUB_OUTPUT
+          echo "| Issue ID | Impact | Description | HTML |" >> $GITHUB_OUTPUT
+          echo "|----------|--------|-------------|------|" >> $GITHUB_OUTPUT
+          echo "$content" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const output = `## Accessibility Test Results
+
+            ${{ steps.parse_results.outputs.results }}
+
+            For detailed information, please check the full test results.
+            `;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              body: output
+            })
