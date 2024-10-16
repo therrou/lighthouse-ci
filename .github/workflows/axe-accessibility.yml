@@ -53,10 +53,20 @@ jobs:
       - name: Generate report
         run: |
           echo "## Accessibility Analysis Results" > report.md
-          echo "Total severe issues: ${{ steps.analyze.outputs.severe_issues }}" >> report.md
+          echo "Total issues: $(jq '. | length' axe-results.json)" >> report.md
           echo "\`\`\`json" >> report.md
-          jq '.violations[] | {impact, description, nodes: [.nodes[].html]}' axe-results.json >> report.md
+          jq '[.[] | {impact: .impact, description: .description, nodes: [.nodes[].html]}]' axe-results.json >> report.md
           echo "\`\`\`" >> report.md
+
+      - name: Analyze results
+          id: analyze
+          run: |
+            severe_issues=$(jq '[.[] | select(.impact == "critical" or .impact == "serious")] | length' axe-results.json)
+            echo "severe_issues=$severe_issues" >> $GITHUB_OUTPUT
+            if [ $severe_issues -gt 5 ]; then
+              echo "Too many severe accessibility issues found: $severe_issues"
+              exit 1
+            fi
 
       - name: Comment PR
         uses: actions/github-script@v6
