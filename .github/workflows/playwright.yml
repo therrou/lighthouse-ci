@@ -26,7 +26,7 @@ jobs:
             sleep 3
           done
 
-      - run: PLAYWRIGHT_JSON_OUTPUT_NAME=results.json npm run playwright test --reporter json
+      - run: npx run playwright test --reporter html
 
       - uses: daun/playwright-report-summary@v3
         if: always()
