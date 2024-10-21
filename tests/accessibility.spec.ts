@@ -10,3 +10,20 @@ test.describe('homepage', () => {
     expect(accessibilityScanResults.violations).toEqual([]); 
   });
 });
+
+
+test.describe("modal dialog", () => {
+  test("The modal should open and don't have accessibility issues", async ({ page }) => {
+    await page.goto("http://localhost:4321/");
+    const modalBtn = await page.waitForSelector("id=open-modal");
+    await modalBtn.click();
+    // await page.locator("id=close-modal").focus
+    // await page.locator("id=close-modal").blur()
+
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .include("#modal-wrapper")
+      .analyze();
+
+    expect(accessibilityScanResults.violations).toEqual([]);
+  })
+})

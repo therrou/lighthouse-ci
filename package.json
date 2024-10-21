@@ -31,6 +31,7 @@
     "gsap": "^3.12.5",
     "html-minifier-terser": "^7.2.0",
     "lenis": "^1.1.9",
+    "playwright-html": "^1.2.5",
     "preline": "^2.4.1",
     "rimraf": "^6.0.1",
     "sharp": "^0.33.4",
