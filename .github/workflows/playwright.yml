@@ -26,7 +26,7 @@ jobs:
             sleep 3
           done
 
-      - run: npm run playwright test
+      - run: npm run playwright 
 
       - uses: daun/playwright-report-summary@v3
         if: always()
