@@ -1,34 +1,31 @@
 name: Playwright Tests
-on: [pull_request]
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 jobs:
   test:
     timeout-minutes: 60
-    name: Run playwright tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Astro site
-        run: npm run build
-
-      - name: Start Astro preview server
-        run: npm run preview -- --port 4321 &
-
-      - name: Wait for server
-        run: |
-          while ! nc -z localhost 4321; do
-            sleep 3
-          done
-
-      - run: npm run playwright 
-
-      - uses: daun/playwright-report-summary@v3
-        if: always()
-        with:
-          report-file: results.json
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Build Astro Project
+      run: npm run build
+    - name: Start Astro Project
+      run: npm run start
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
