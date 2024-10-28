@@ -60,7 +60,7 @@ jobs:
           npx playwright install-deps chromium
 
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npm run playwright test
         env:
           CI: true
         continue-on-error: true  # Continue even if tests fail
