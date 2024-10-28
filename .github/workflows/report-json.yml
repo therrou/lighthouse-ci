@@ -8,6 +8,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Astro Project
+        run: npm run build
+      - name: Build Astro site
+        run: npm run build
+      - name: Start Astro preview server
+        run: npm run preview -- --port 4321 &
+      - name: Wait for server
+        run: |
+          while ! nc -z localhost 4321; do
+            sleep 3
+          done
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test
       - name: Run CTRF annotations
-        run: npx github-actions-ctrf path-to-your-ctrf-report.json
+        run: npx github-actions-ctrf ctrf/ctrf-report.json
         if: always()
