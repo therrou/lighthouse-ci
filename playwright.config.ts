@@ -7,7 +7,7 @@ import { defineConfig, devices } from '@playwright/test';
 // import dotenv from 'dotenv';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
-
+const baseURL = `http://localhost:3000`;
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -23,13 +23,19 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: [['json', { outputFile: 'results.json' }]],
-  // reporter: [
-  //   ['playwright-html', { 
-  //     theme: 'light',
-  //   }]
-  // ],
+  reporter: [
+    ['playwright-html', { 
+      theme: 'light',
+    }]
+  ],
+  webServer: {
+    command: "npm run dev",
+    url: baseURL,
+    timeout: 120 * 1000,
+    reuseExistingServer: process.env.CI ? true : false,
+},
   // reporter: [['html']],
-  reporter: [['json']],
+  // reporter: [['json']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
