@@ -60,7 +60,7 @@ jobs:
           npx playwright install-deps chromium
 
       - name: Run Playwright tests
-        run: npm run playwright test
+        run: npx playwright test
         env:
           CI: true
         continue-on-error: true  # Continue even if tests fail
@@ -78,6 +78,12 @@ jobs:
             ctrf/ctrf-report.json
             playwright-report/
           retention-days: 30
+
+      - name: Publish CTRF pull request comment
+        run: npx github-actions-ctrf pull-request ctrf/ctrf-report.json/playwright-report/
+        if: always()
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Stop preview server
         if: always()
