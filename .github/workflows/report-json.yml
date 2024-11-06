@@ -60,10 +60,10 @@ jobs:
           npx playwright install-deps chromium
 
       - name: Run Playwright tests
-        id: playwright
         run: npm run playwright test
         env:
           CI: true
+        continue-on-error: false  # Continue even if tests fail
 
       - name: Run CTRF annotations
         if: always()  # Run even if previous steps fail
@@ -83,10 +83,8 @@ jobs:
         if: always()
         run: kill $(cat ./server.pid) || true
 
-      - name: Check test results
-        if: always()
+      - name: Check for test failures
+        if: failure()
         run: |
-          if [ "${{ steps.playwright.outcome }}" == "failure" ]; then
-            echo "::error::Accessibility tests failed. Please check the report artifacts."
-            exit 1
-          fi
+          echo "::error::Accessibility tests failed. Please check the report artifacts."
+          exit 1
