@@ -29,7 +29,9 @@ export default defineConfig({
   //   }]
   // ],
   reporter: [
-    ['playwright-ctrf-json-reporter', {}]
+    ['playwright-ctrf-json-reporter', {
+      minimal: true
+    }]
   ],
   webServer: {
     command: "npm run dev",
