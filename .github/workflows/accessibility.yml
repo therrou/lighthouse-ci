@@ -6,9 +6,15 @@ on:
   pull_request:
     branches: [ main ]
 
+# Prevent multiple workflow runs from interfering with each other
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   accessibility:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
     - uses: actions/checkout@v4
@@ -22,18 +28,57 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
+    - name: Cache Pa11y CI
+      uses: actions/cache@v3
+      id: pa11y-cache
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-pa11y-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-pa11y-
+    
     - name: Install Pa11y CI
+      if: steps.pa11y-cache.outputs.cache-hit != 'true'
       run: npm install -g pa11y-ci
     
     - name: Start development server
-      run: npm run dev &
+      run: |
+        npm run dev > server.log 2>&1 &
+        echo $! > server.pid
     
-    - name: Wait for server to start
-      run: sleep 10
+    - name: Wait for server to be ready
+      run: |
+        timeout=60
+        while ! curl -s http://localhost:4321 > /dev/null; do
+          if [ $timeout -le 0 ]; then
+            echo "Server failed to start within 60 seconds"
+            cat server.log
+            exit 1
+          fi
+          sleep 1
+          timeout=$((timeout-1))
+        done
+        echo "Server is ready!"
     
     - name: Run Pa11y CI
       run: |
-        pa11y-ci --config .pa11yci.json
+        pa11y-ci --config .pa11yci.json || {
+          echo "Accessibility issues found. Check the logs above for details."
+          exit 1
+        }
     
-    - name: Stop development server
-      run: pkill -f "astro dev" 
+    - name: Upload server logs
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: server-logs
+        path: server.log
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        if [ -f server.pid ]; then
+          kill $(cat server.pid) || true
+          rm server.pid
+        fi
+        pkill -f "astro dev" || true 
